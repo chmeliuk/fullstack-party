@@ -1,0 +1,19 @@
+chmeliuk_testio__index:
+    path:     /
+    defaults: { _controller: ChmeliukTestioBundle:Default:index }
+
+chmeliuk_testio__login:
+    path:     /login/
+    defaults: { _controller: ChmeliukTestioBundle:Default:login }
+
+chmeliuk_testio__list:
+    path:     /list
+    defaults: { _controller: ChmeliukTestioBundle:Issue:list }
+
+chmeliuk_testio__item_comments:
+    path:     /item/{owner}/{repository}/{id}/comments
+    defaults: { _controller: ChmeliukTestioBundle:Issue:comments }
+
+chmeliuk_testio__item:
+    path:     /item/{owner}/{repository}/{id}
+    defaults: { _controller: ChmeliukTestioBundle:Issue:one }

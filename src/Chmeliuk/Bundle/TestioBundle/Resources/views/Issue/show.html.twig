@@ -1,0 +1,94 @@
+{% extends "::base.html.twig" %}
+{% block body %}
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>{{ item.title }}</h2>
+                {% if 'open' == item.state %}
+                    {% set cls = 'octicon-issue-opened' %}
+                    {% set txt = 'OPEN' %}
+                    {% set prcls = 'octicon-git-pull-request' %}
+                    {% set prtxt = txt %}
+                {% else %}
+                    {% set cls = 'octicon-issue-closed' %}
+                    {% set txt = 'CLOSED' %}
+                    {% set prcls = 'octicon-git-merge' %}
+                    {% set prtxt = 'MERGED' %}
+                {% endif %}
+
+                {% if item.pull_request is defined %}
+                    {% set cls = prcls %}
+                    {% set txt = prtxt %}
+                {% endif %}
+                <div>
+                    <span class="label label-success"><i class="octicon {{ cls }}"></i> {{ txt }}</span>
+                    <span class="text-muted">
+                        <a href="{{ item.user.html_url }}">{{ item.user.login }}</a>
+                        opened this {% if item.pull_request is defined %}pull request{% else %}issue{% endif %}
+                        on {{ item.created_at|date("F jS \\a\\t g:ia") }}
+                        - {{ "{0} comments|{1} comment|]1,Inf] %count% comments"|transchoice(item.comments) }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="media">
+            <div class="media-left col-md-1 col-xs-2">
+                <a href="{{ item.user.html_url }}" class="thumbnail">
+                    <img class="media-object" src="{{ item.user.avatar_url }}" alt="{{ item.user.login }}">
+                </a>
+            </div>
+            <div class="media-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading text-small"><a href="{{ item.user.html_url }}">{{ item.user.login }}</a> commented on {{ item.created_at|date("F jS \\a\\t g:ia") }}</div>
+                    <div class="panel-body">
+                        {{ item.body }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        {% for comment in comments %}
+            <div class="media">
+                <div class="media-left col-md-1 col-xs-2">
+                    <a href="{{ comment.user.html_url }}" class="thumbnail">
+                        <img class="media-object" src="{{ comment.user.avatar_url }}" alt="{{ comment.user.login }}">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-small"><a href="{{ comment.user.html_url }}">{{ comment.user.login }}</a> commented on {{ comment.created_at|date("F jS \\a\\t g:ia") }}</div>
+                        <div class="panel-body">
+                            {{ comment.body }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% if pagination %}
+        <div class="row">
+            <nav aria-label="Issues Pagination">
+                <ul class="pager">
+                    {% if pagination.prev is defined %}
+                        {% set pcls = '' %}
+                        {% set puri = path('chmeliuk_testio__item', {'owner': app.request.get('owner'), 'repository': app.request.get('repository'), 'id': app.request.get('id') } + pagination.prev.parameters) %}
+                    {% else %}
+                        {% set pcls = ' disabled' %}
+                        {% set puri = '#' %}
+                    {% endif %}
+                    <li class="previous{{ pcls }}"><a href="{{ puri }}"><span aria-hidden="true">&larr;</span> Previous</a></li>
+
+                    {% if pagination.next is defined %}
+                        {% set ncls = '' %}
+                        {% set nuri = path('chmeliuk_testio__item', {'owner': app.request.get('owner'), 'repository': app.request.get('repository'), 'id': app.request.get('id') } + pagination.next.parameters) %}
+                    {% else %}
+                        {% set ncls = ' disabled' %}
+                        {% set nuri = '#' %}
+                    {% endif %}
+                    <li class="next{{ ncls }}"><a href="{{ nuri }}">Next <span aria-hidden="true">&rarr;</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+{% endblock %}

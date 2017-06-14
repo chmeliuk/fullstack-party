@@ -1,0 +1,77 @@
+{% extends "::base.html.twig" %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-6">
+            {% for item in collection %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="pull-left col-md-1">
+
+                            {% if 'open' == item.state %}
+                                {% set cls = 'octicon-issue-opened' %}
+                                {% set prcls = 'octicon-git-pull-request' %}
+                            {% else %}
+                                {% set cls = 'octicon-issue-closed' %}
+                                {% set prcls = 'octicon-git-merge' %}
+                            {% endif %}
+
+                            {% if item.pull_request is defined %}
+                                {% set cls = prcls %}
+                            {% endif %}
+                            <i class="octicon mega-octicon {{ cls }}"></i>
+                        </div>
+
+
+                        <div class="pull-left col-md-9">
+                            <a href="{{ path('chmeliuk_testio__item', {'owner': item.repository.owner.login, 'repository': item.repository.name, 'id': item.number }) }}">{{ item.title }}</a>
+                            {% for label in item.labels %}<span class="label">{{ label.name }}</span> {% endfor %}
+                            <div class="small">
+                                <span class="text-muted">
+                                    <a href="{{ path('chmeliuk_testio__item', {'owner': item.repository.owner.login, 'repository': item.repository.name, 'id': item.number }) }}">#{{ item.number }}</a>
+                                    opened {{ item.created_at|date("F jS \\a\\t g:ia") }} by <a
+                                            href="{{ item.user.html_url }}">{{ item.user.login }}</a></span>
+                            </div>
+
+                        </div>
+                        <div class="pull-right col-md-2">
+                            <a href="{{ path('chmeliuk_testio__item', {'owner': item.repository.owner.login, 'repository': item.repository.name, 'id': item.number }) }}">
+                            <i class="octicon octicon-comment"></i> {{ item.comments }}</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if pagination %}
+            <div class="row">
+                <nav aria-label="Issues Pagination">
+                    <ul class="pager">
+                        {% if pagination.prev is defined %}
+                            {% set pcls = '' %}
+                            {% set puri = path('chmeliuk_testio__list', pagination.prev.parameters) %}
+                        {% else %}
+                            {% set pcls = ' disabled' %}
+                            {% set puri = '#' %}
+                        {% endif %}
+                        <li class="previous{{ pcls }}"><a href="{{ puri }}"><span aria-hidden="true">&larr;</span> Previous</a></li>
+
+                        {% if pagination.next is defined %}
+                            {% set ncls = '' %}
+                            {% set nuri = path('chmeliuk_testio__list', pagination.next.parameters) %}
+                        {% else %}
+                            {% set ncls = ' disabled' %}
+                            {% set nuri = '#' %}
+                        {% endif %}
+                        <li class="next{{ ncls }}"><a href="{{ nuri }}">Next <span aria-hidden="true">&rarr;</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <div class="tow text-center">
+                <h1>Full Stack Developer Task</h1>
+                <p>by testio.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

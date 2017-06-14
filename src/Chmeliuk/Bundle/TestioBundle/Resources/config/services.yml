@@ -1,0 +1,19 @@
+services:
+    chmeliuk.testio.component.github.client:
+        class: Github\Client
+        factory: ['Chmeliuk\Bundle\TestioBundle\Component\Github\Client\Factory\GithubClientFactory', 'create']
+        public: false
+
+
+    chmeliuk.testio.component.github.client.authenticated:
+        class: Github\Client
+        factory: ['Chmeliuk\Bundle\TestioBundle\Component\Github\Client\Factory\AuthenticatedGithubClientFactory', 'create']
+        arguments:
+            - "@chmeliuk.testio.component.github.client"
+            - "@security.token_storage"
+        public: false
+
+    chmeliuk.testio.component.github.provider.issue:
+        class: Chmeliuk\Bundle\TestioBundle\Component\Github\Provider\GithubIssueProvider
+        arguments:
+            - "@chmeliuk.testio.component.github.client.authenticated"
